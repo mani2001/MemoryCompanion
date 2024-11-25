@@ -1,0 +1,10 @@
+gradio
+python-dotenv
+flask
+langchain
+langchain-groq
+langchain-huggingface
+langchain-chroma
+chromadb
+onnxruntime
+pyttsx3

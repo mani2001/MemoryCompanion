@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MemoryCompanion</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&family=Open+Sans:wght@400&display=swap" rel="stylesheet">
+  <style>
+    /* Global Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: linear-gradient(to right, #667eea, #764ba2);
+      color: #333333;
+      margin: 0;
+    }
+
+    .main-header {
+      text-align: center;
+      padding: 20px 0;
+      color: #ffffff;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 36px;
+      background-color: rgba(0, 0, 0, 0.5);
+      margin-bottom: 10px;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: row;
+      height: calc(100vh - 80px); /* Adjust for header height */
+    }
+
+    /* Left Panel (Chat) */
+    .left-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-right: 2px solid #ddd;
+    }
+
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .chat-window {
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px;
+      border: 1px solid #ddd;
+      margin-bottom: 20px;
+      background-color: #f7f7f7;
+      display: flex;
+      flex-direction: column;
+      border-radius: 10px;
+    }
+
+    .chat-window p {
+      max-width: 75%;
+      margin-bottom: 15px;
+      padding: 12px 18px;
+      border-radius: 20px;
+      word-wrap: break-word;
+      font-size: 16px;
+      line-height: 1.4;
+    }
+
+    .user-message {
+      background-color: #667eea;
+      color: #ffffff;
+      align-self: flex-end;
+    }
+
+    .bot-message {
+      background-color: #e0e0e0;
+      align-self: flex-start;
+    }
+
+    .chat-input {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chat-input-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .chat-input-buttons button {
+      background-color: #667eea;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 20px;
+      cursor: pointer;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 12px 20px;
+      border: 1px solid #ddd;
+      background-color: #ffffff;
+      border-radius: 30px;
+      font-size: 16px;
+    }
+
+    .chat-btn {
+      background-color: #28a745; /* Green color */
+      color: white;
+      font-size: 20px;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Right Panel (To-Do List) */
+    .right-panel {
+      flex: 1;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .to-do-container {
+      height: 60%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    .to-do-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .to-do-list {
+      flex: 1;
+      overflow-y: hidden;
+      position: relative;
+    }
+
+    .slider {
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.5s ease;
+      overflow-y: auto;
+      height: 100%;
+    }
+
+    .to-do-item {
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      margin-bottom: 10px;
+      background-color: #f7f7f7;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+
+    .to-do-item span {
+      font-size: 16px;
+    }
+
+    .timestamp {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .delete-btn {
+      align-self: flex-end;
+      background-color: #ff5c5c;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* Calendar Styles */
+    .calendar-container {
+      flex: 1;
+      margin-top: 20px;
+      text-align: center;
+      max-height: 150px; /* Further reduce size of the calendar */
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+
+    .calendar-header button {
+      background-color: #667eea;
+      color: white;
+      border: none;
+      padding: 3px 8px; /* Reduce button padding */
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .calendar-header span {
+      font-size: 14px; /* Reduce font size */
+      font-weight: bold;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px; /* Reduce gap between cells */
+    }
+
+    .calendar-day-names {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+      margin-bottom: 5px;
+    }
+
+    .calendar-day {
+      padding: 5px;
+      font-size: 12px;
+      font-weight: bold;
+      background-color: #ddd;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    .calendar-cell {
+      padding: 5px; /* Reduce cell padding */
+      background-color: #f7f7f7;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    .calendar-cell:hover {
+      background-color: #ddd;
+    }
+
+    .current-date {
+      background-color: #28a745 !important;
+      color: white;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="main-header">MemoryCompanion</div>
+  <div class="container">
+    <!-- Left Panel (Chatbox) -->
+    <div class="left-panel">
+      <div class="chat-container">
+        <div class="chat-window" id="chat-window"></div>
+
+        <!-- Add & Question Buttons -->
+        <div class="chat-input-buttons">
+          <button id="add-button" onclick="setMode('add')">Add</button>
+          <button id="question-button" onclick="setMode('question')">Question</button>
+        </div>
+
+        <div class="chat-input">
+          <input type="text" id="chat-input" placeholder="Type your message...">
+          <button class="chat-btn" onclick="sendMessage()">▸</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel (To-Do List and Calendar) -->
+    <div class="right-panel">
+      <div class="to-do-container">
+        <h2 class="to-do-title">To-Do List</h2>
+        <div class="to-do-list" id="to-do-list">
+          <div class="slider" id="slider"></div>
+        </div>
+      </div>
+      <!-- Calendar Panel -->
+      <div class="calendar-container">
+        <div class="calendar-header">
+          <button onclick="changeMonth(-1)">◄</button>
+          <span id="current-month-year"></span>
+          <button onclick="changeMonth(1)">►</button>
+        </div>
+        <div class="calendar-day-names" id="calendar-day-names"></div>
+        <div class="calendar-grid" id="calendar-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentMode = '';
+
+    function setMode(mode) {
+      currentMode = mode;
+      updateButtonStyles();
+      document.getElementById("chat-input").placeholder =
+        mode === "add" ? "Add information..." : "Ask a question...";
+    }
+
+    function updateButtonStyles() {
+      const addButton = document.getElementById("add-button");
+      const questionButton = document.getElementById("question-button");
+
+      addButton.style.backgroundColor = currentMode === "add" ? "#28a745" : "#667eea";
+      questionButton.style.backgroundColor = currentMode === "question" ? "#28a745" : "#667eea";
+    }
+
+    function sendMessage() {
+      const chatInput = document.getElementById("chat-input");
+      const chatWindow = document.getElementById("chat-window");
+      const message = chatInput.value.trim();
+
+      if (!currentMode) {
+        alert("Please select 'Add' or 'Question' mode first.");
+        return;
+      }
+
+      if (message) {
+        const userMessage = document.createElement("p");
+        userMessage.classList.add("user-message");
+        userMessage.textContent = `${currentMode}: ${message}`;
+        chatWindow.appendChild(userMessage);
+
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+
+        fetch("/chatbot/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: `${currentMode}: ${message}` }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const botMessage = document.createElement("p");
+            botMessage.classList.add("bot-message");
+            botMessage.textContent = data.response;
+            chatWindow.appendChild(botMessage);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+
+            if (data.todo_task) {
+              addTaskToUI(data.todo_task, data.timestamp);
+            }
+          })
+          .catch((error) => console.error("Error:", error));
+
+        chatInput.value = "";
+      }
+    }
+
+    function addTaskToUI(task, timestamp) {
+      const slider = document.getElementById("slider");
+
+      const toDoItem = document.createElement("div");
+      toDoItem.classList.add("to-do-item");
+
+      const taskText = document.createElement("span");
+      taskText.textContent = task;
+
+      const taskTimestamp = document.createElement("small");
+      taskTimestamp.classList.add("timestamp");
+      taskTimestamp.textContent = `Added on: ${timestamp || new Date().toLocaleString()}`;
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.classList.add("delete-btn");
+      deleteBtn.textContent = "X";
+      deleteBtn.onclick = () => {
+        toDoItem.remove();
+        fetch("/delete_todo/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ task: task }),
+        }).catch((error) => console.error("Error deleting task:", error));
+      };
+
+      toDoItem.appendChild(taskText);
+      toDoItem.appendChild(taskTimestamp);
+      toDoItem.appendChild(deleteBtn);
+      slider.appendChild(toDoItem);
+    }
+
+    function initializeToDoList() {
+      // Pass the preloaded tasks from Flask to JavaScript
+      const preloadedTasks = JSON.parse('{{ todo_tasks | tojson | safe }}');
+
+      // Iterate through tasks and add them to the UI
+      preloadedTasks.forEach(task => {
+        addTaskToUI(task.task, task.timestamp);
+      });
+    }
+
+    window.onload = function () {
+      initializeToDoList();
+      renderCalendar();
+    };
+
+    const currentDate = new Date();
+
+    function renderCalendar() {
+      const calendarGrid = document.getElementById('calendar-grid');
+      const calendarDayNames = document.getElementById('calendar-day-names');
+      const currentMonthYear = document.getElementById('current-month-year');
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      const today = currentDate.getDate();
+
+      currentMonthYear.textContent = `${currentDate.toLocaleString('default', { month: 'long' })} ${year}`;
+
+      calendarGrid.innerHTML = '';
+      calendarDayNames.innerHTML = '';
+
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      dayNames.forEach(day => {
+        const dayNameCell = document.createElement('div');
+        dayNameCell.classList.add('calendar-day');
+        dayNameCell.textContent = day;
+        calendarDayNames.appendChild(dayNameCell);
+      });
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      for (let i = 0; i < firstDay; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.classList.add('calendar-cell');
+        calendarGrid.appendChild(emptyCell);
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayCell = document.createElement('div');
+        dayCell.classList.add('calendar-cell');
+        dayCell.textContent = day;
+        if (day === today) {
+          dayCell.classList.add('current-date');
+        }
+        calendarGrid.appendChild(dayCell);
+      }
+    }
+
+    function changeMonth(offset) {
+      currentDate.setMonth(currentDate.getMonth() + offset);
+      renderCalendar();
+    }
+  </script>
+</body>
+</html>
