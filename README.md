@@ -48,6 +48,10 @@ MemoryCompanion is a tool for people suffering with Mild Cognitive Impairment (M
    ```bash
    python app.py
    ```
+6. Open the localhost:
+   ```bash
+    http://127.0.0.1:8081 (use the localhost that shows up in your terminal in place of this
+   ```
    The initialization may take upto 20 second the first time.
 ## Usage
 **Select Modes** - Either select 'Add' if you want to add an information to the database and select 'Question' if you want to query the LLM.
